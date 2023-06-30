@@ -1,17 +1,28 @@
 import React, {useEffect, useState} from 'react';
 import {Button, SafeAreaView, StyleSheet, Text, View} from 'react-native';
-import AsyncStorage from '@react-native-async-storage/async-storage';
-const FASTING_TIME = 16 * 1000;
-const EATING_TIME = 8 * 1000;
+import CircularProgress from 'react-native-circular-progress-indicator/';
+
+const FASTING_TIME = 12 * 1000;
+const EATING_TIME = 6 * 1000;
 
 export type Mode = 'normal' | 'fasting' | 'eating';
 
+type AppState = {
+  remainingTime: number | null;
+  isStarted: boolean;
+  isFinished: boolean;
+  mode: Mode;
+  endDate: number | null;
+};
+
 function App(): JSX.Element {
-  const [remainingTime, setRemainingTime] = useState<number | null>(null);
-  const [isStarted, setIsStarted] = useState(false);
-  const [isFinished, setIsFinished] = useState(false);
-  const [mode, setMode] = useState<Mode>('normal');
-  const [endDate, setEndDate] = useState<number | null>(null);
+  const [appState, setAppState] = useState<AppState>({
+    remainingTime: null,
+    isStarted: false,
+    isFinished: false,
+    mode: 'normal',
+    endDate: null,
+  });
 
   useEffect(() => {
     const calculateRemainingTime = (end: number) => {
@@ -20,15 +31,24 @@ function App(): JSX.Element {
     };
 
     let interval: NodeJS.Timeout | null = null;
+    const {isStarted, endDate} = appState;
+
     if (isStarted && endDate) {
       interval = setInterval(() => {
         const remainingSecs = calculateRemainingTime(endDate);
         if (remainingSecs === 0) {
-          setRemainingTime(0);
-          setIsStarted(false);
-          setIsFinished(true);
+          setAppState(prevState => ({
+            ...prevState,
+            remainingTime: 0,
+            isStarted: false,
+            isFinished: true,
+          }));
+        } else {
+          setAppState(prevState => ({
+            ...prevState,
+            remainingTime: remainingSecs,
+          }));
         }
-        setRemainingTime(remainingSecs);
       }, 1000);
     }
 
@@ -37,77 +57,116 @@ function App(): JSX.Element {
         clearInterval(interval);
       }
     };
-  }, [endDate, isStarted, mode]);
+  }, [appState]);
 
   const handleStartFast = () => {
     const startDate = Date.now();
+    const {isStarted, mode} = appState;
+
     if (!isStarted) {
       if (mode === 'normal' || mode === 'eating') {
-        // start fasting
         console.log(
           `oruc bitis tarihi: ${new Date(
             startDate + FASTING_TIME,
           ).toLocaleString()}`,
         );
-        setEndDate(startDate + FASTING_TIME);
-        setIsStarted(true);
-        setIsFinished(false);
-        setMode('fasting');
+        setAppState(prevState => ({
+          ...prevState,
+          endDate: startDate + FASTING_TIME,
+          isStarted: true,
+          isFinished: false,
+          mode: 'fasting',
+        }));
       }
       if (mode === 'fasting') {
-        // start eating
         console.log(
           `yemek bitis tarihi: ${new Date(
             startDate + EATING_TIME,
           ).toLocaleString()}`,
         );
-        setEndDate(startDate + EATING_TIME);
-        setIsStarted(true);
-        setIsFinished(false);
-        setMode('eating');
+        setAppState(prevState => ({
+          ...prevState,
+          endDate: startDate + EATING_TIME,
+          isStarted: true,
+          isFinished: false,
+          mode: 'eating',
+        }));
       }
     }
   };
+
+  const {remainingTime, isStarted, isFinished, mode} = appState;
 
   return (
     <SafeAreaView style={styles.container}>
       <Message mode={mode} finished={isFinished} />
       <Button disabled={isStarted} title="Başlat" onPress={handleStartFast} />
-      <Button
-        title="write to storage"
-        onPress={() => {
-          const storeData = async (value: string) => {
-            try {
-              await AsyncStorage.setItem('my-key', value);
-              console.log('basariyla kaydettim');
-            } catch (e) {
-              // saving error
-              console.log(e);
-            }
-          };
-          //
-          // storeData('furkan');
-
-          const getData = async () => {
-            try {
-              const value = await AsyncStorage.getItem('my-key');
-              if (value !== null) {
-                // value previously stored
-                console.log('Daha once kaydedilmis veri :');
-                console.log(value);
-              }
-            } catch (e) {
-              // error reading value
-            }
-          };
-
-          getData();
-        }}
-      />
-      <Text style={styles.remainingTime}>{remainingTime}</Text>
+      {remainingTime !== null && (
+        <Countdown value={remainingTime} mode={mode} />
+      )}
+      <Text>{remainingTime}</Text>
     </SafeAreaView>
   );
 }
+
+const Countdown = ({value, mode}: any): JSX.Element => {
+  const calculatePercentage = (
+    currentValue: number,
+    currentMode: Mode,
+  ): number => {
+    if (currentMode === 'eating') {
+      const percent = Math.floor((currentValue / 6) * 100);
+      return percent;
+    }
+    if (currentMode === 'fasting') {
+      const percent = Math.floor((currentValue / 12) * 100);
+      return percent;
+    }
+
+    return 0;
+  };
+  useEffect(() => {
+    console.log('Countdown render edildi');
+    console.log({value, mode});
+
+    return () => {
+      console.log('Countdown unmount edildi!!');
+    };
+  }, [value, mode]);
+  return (
+    <View>
+      <CircularProgress
+        startInPausedState={false}
+        initialValue={100}
+        clockwise={false}
+        value={calculatePercentage(value, mode)}
+        radius={120}
+        progressValueColor={'#ecf0f1'}
+        activeStrokeColor={'gray'}
+        inActiveStrokeColor={'#2ecc71'}
+        maxValue={100}
+        title={'%'}
+        titleColor={'black'}
+        titleStyle={{fontWeight: 'bold'}}
+        progressFormatter={() => {
+          'worklet';
+
+          return value; // use remainingSeconds as value instead of percentage
+        }}
+      />
+    </View>
+  );
+};
+
+const styles = StyleSheet.create({
+  container: {
+    flex: 1,
+    padding: 16,
+    backgroundColor: '#fff',
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+});
 
 const Message = ({
   mode,
@@ -130,33 +189,5 @@ const Message = ({
   }
   return <Text>{message}</Text>;
 };
-
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    padding: 16,
-    backgroundColor: '#fff',
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
-  label: {
-    fontSize: 16,
-    fontWeight: 'bold',
-    marginTop: 16,
-  },
-  input: {
-    height: 40,
-    borderColor: '#ccc',
-    borderWidth: 1,
-    paddingHorizontal: 16,
-    marginBottom: 16,
-  },
-  remainingTime: {
-    marginTop: 32,
-    fontSize: 24,
-    fontWeight: 'bold',
-    color: 'red',
-  },
-});
 
 export default App;
