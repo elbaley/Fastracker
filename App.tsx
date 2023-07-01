@@ -1,15 +1,14 @@
+import {NavigationContainer} from '@react-navigation/native';
 import React, {useEffect, useState} from 'react';
+import {createBottomTabNavigator} from '@react-navigation/bottom-tabs';
 import {
-  Button,
   SafeAreaView,
   StyleSheet,
   Text,
   TouchableOpacity,
   View,
 } from 'react-native';
-import CircularProgress, {
-  CircularProgressBase,
-} from 'react-native-circular-progress-indicator/';
+import {CircularProgressBase} from 'react-native-circular-progress-indicator/';
 
 const FASTING_TIME = 12 * 1000;
 const EATING_TIME = 6 * 1000;
@@ -24,7 +23,37 @@ type AppState = {
   endDate: number | null;
 };
 
+type RootTabStackParamList = {
+  Home: undefined;
+  Settings: undefined;
+};
+
+const Tab = createBottomTabNavigator<RootTabStackParamList>();
+
 function App(): JSX.Element {
+  return (
+    <NavigationContainer>
+      <Tab.Navigator
+        screenOptions={{
+          headerShown: false,
+          tabBarStyle: {
+            backgroundColor: '#2e2c30',
+            borderTopWidth: 0,
+            borderTopColor: 'transparent',
+          },
+        }}>
+        <Tab.Screen name="Home" component={Home} />
+        <Tab.Screen name="Settings" component={Settings} />
+      </Tab.Navigator>
+    </NavigationContainer>
+  );
+}
+
+function Settings(): JSX.Element {
+  return <Text>Settings Screen</Text>;
+}
+
+function Home(): JSX.Element {
   const [appState, setAppState] = useState<AppState>({
     remainingTime: null,
     isStarted: false,
