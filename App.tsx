@@ -1,6 +1,15 @@
 import React, {useEffect, useState} from 'react';
-import {Button, SafeAreaView, StyleSheet, Text, View} from 'react-native';
-import CircularProgress from 'react-native-circular-progress-indicator/';
+import {
+  Button,
+  SafeAreaView,
+  StyleSheet,
+  Text,
+  TouchableOpacity,
+  View,
+} from 'react-native';
+import CircularProgress, {
+  CircularProgressBase,
+} from 'react-native-circular-progress-indicator/';
 
 const FASTING_TIME = 12 * 1000;
 const EATING_TIME = 6 * 1000;
@@ -99,27 +108,45 @@ function App(): JSX.Element {
 
   return (
     <SafeAreaView style={styles.container}>
+      <Countdown value={remainingTime} mode={mode} />
       <Message mode={mode} finished={isFinished} />
-      <Button disabled={isStarted} title="Başlat" onPress={handleStartFast} />
-      {remainingTime !== null && (
-        <Countdown value={remainingTime} mode={mode} />
-      )}
-      <Text>{remainingTime}</Text>
+      <TouchableOpacity
+        style={styles.startBtn}
+        onPress={handleStartFast}
+        disabled={isStarted}>
+        <Text style={styles.startBtnText}>Start</Text>
+      </TouchableOpacity>
     </SafeAreaView>
   );
 }
 
 const Countdown = ({value, mode}: any): JSX.Element => {
+  function secondsToTimeString(seconds: number) {
+    const hours = Math.floor(seconds / 3600);
+    const minutes = Math.floor((seconds % 3600) / 60);
+    const remainderSecs = seconds % 60;
+
+    const formatNumber = (num: number) => (num <= 9 ? `0${num}` : `${num}`);
+
+    const timeString = `${formatNumber(hours)}:${formatNumber(
+      minutes,
+    )}:${formatNumber(remainderSecs)}`;
+
+    return timeString;
+  }
   const calculatePercentage = (
     currentValue: number,
     currentMode: Mode,
   ): number => {
     if (currentMode === 'eating') {
       const percent = Math.floor((currentValue / 6) * 100);
+      console.log(`${percent} dönüyom`);
       return percent;
     }
     if (currentMode === 'fasting') {
       const percent = Math.floor((currentValue / 12) * 100);
+      console.log(`${percent} dönüyom`);
+
       return percent;
     }
 
@@ -135,24 +162,18 @@ const Countdown = ({value, mode}: any): JSX.Element => {
   }, [value, mode]);
   return (
     <View>
-      <CircularProgress
+      <CircularProgressBase
         startInPausedState={false}
-        initialValue={100}
+        initialValue={0}
         clockwise={false}
         value={calculatePercentage(value, mode)}
         radius={120}
-        progressValueColor={'#ecf0f1'}
-        activeStrokeColor={'gray'}
-        inActiveStrokeColor={'#2ecc71'}
+        activeStrokeColor="gray"
+        inActiveStrokeColor="#FF002E"
         maxValue={100}
-        title={'%'}
-        titleColor={'black'}
-        titleStyle={{fontWeight: 'bold'}}
-        progressFormatter={() => {
-          'worklet';
-
-          return value; // use remainingSeconds as value instead of percentage
-        }}
+        children={
+          <Text style={styles.textContainer}>{secondsToTimeString(value)}</Text>
+        }
       />
     </View>
   );
@@ -161,10 +182,35 @@ const Countdown = ({value, mode}: any): JSX.Element => {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
+    gap: 20,
     padding: 16,
-    backgroundColor: '#fff',
+    backgroundColor: '#292931',
     alignItems: 'center',
     justifyContent: 'center',
+  },
+  textContainer: {
+    padding: 16,
+    fontSize: 16,
+    color: 'white',
+    fontWeight: 'bold',
+  },
+  startBtn: {
+    color: 'white',
+    backgroundColor: '#FF002E',
+    paddingVertical: 10,
+    paddingHorizontal: 15,
+    borderRadius: 10,
+  },
+  startBtnText: {
+    color: 'white',
+    fontSize: 16,
+    fontWeight: '500',
+  },
+  messageText: {
+    color: 'white',
+    fontSize: 16,
+    fontWeight: '500',
+    textAlign: 'center',
   },
 });
 
@@ -178,16 +224,16 @@ const Message = ({
   let message = '';
   if (mode === 'fasting') {
     message = finished
-      ? 'Oruç bitti! Yeme süresini başlat:'
-      : 'Oruçtasınız! Orucun bitmesine:';
+      ? 'Fasting completed 🎉 !\nStart eating period:'
+      : 'You are fasting!';
   } else if (mode === 'eating') {
     message = finished
-      ? 'Yemek süresi bitti! Oruç süresini başlat:'
-      : 'Yemektesiniz! Yemeğin bitmesine:';
+      ? 'Eating period completed!\nStart fasting:'
+      : 'You can eat! 🍽️';
   } else {
-    message = 'Oruc/Yemek başlamadı. Orucu başlatın.';
+    message = 'Fasting/Eating not started\nStart fasting';
   }
-  return <Text>{message}</Text>;
+  return <Text style={styles.messageText}>{message}</Text>;
 };
 
 export default App;
