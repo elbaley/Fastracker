@@ -1,5 +1,7 @@
 import {NavigationContainer} from '@react-navigation/native';
-import React, {useEffect, useState} from 'react';
+import React, {useEffect} from 'react';
+import {RootState, useAppSelector, useAppDispatch} from './src/app/store';
+import {Mode, setAppState} from './src/app/appslice';
 import {createBottomTabNavigator} from '@react-navigation/bottom-tabs';
 import {
   SafeAreaView,
@@ -9,19 +11,10 @@ import {
   View,
 } from 'react-native';
 import {CircularProgressBase} from 'react-native-circular-progress-indicator/';
-
+import store from './src/app/store';
+import {Provider, useSelector} from 'react-redux';
 const FASTING_TIME = 12 * 1000;
 const EATING_TIME = 6 * 1000;
-
-export type Mode = 'normal' | 'fasting' | 'eating';
-
-type AppState = {
-  remainingTime: number | null;
-  isStarted: boolean;
-  isFinished: boolean;
-  mode: Mode;
-  endDate: number | null;
-};
 
 type RootTabStackParamList = {
   Home: undefined;
@@ -32,36 +25,39 @@ const Tab = createBottomTabNavigator<RootTabStackParamList>();
 
 function App(): JSX.Element {
   return (
-    <NavigationContainer>
-      <Tab.Navigator
-        screenOptions={{
-          headerShown: false,
-          tabBarStyle: {
-            backgroundColor: '#2e2c30',
-            borderTopWidth: 0,
-            borderTopColor: 'transparent',
-          },
-        }}>
-        <Tab.Screen name="Home" component={Home} />
-        <Tab.Screen name="Settings" component={Settings} />
-      </Tab.Navigator>
-    </NavigationContainer>
+    <Provider store={store}>
+      <NavigationContainer>
+        <Tab.Navigator
+          screenOptions={{
+            headerShown: false,
+            tabBarStyle: {
+              backgroundColor: '#2e2c30',
+              borderTopWidth: 0,
+              borderTopColor: 'transparent',
+            },
+          }}>
+          <Tab.Screen name="Home" component={Home} />
+          <Tab.Screen name="Settings" component={Settings} />
+        </Tab.Navigator>
+      </NavigationContainer>
+    </Provider>
+  );
+}
+function Settings(): JSX.Element {
+  const {remainingTime} = useSelector((state: RootState) => state.app);
+
+  return (
+    <SafeAreaView>
+      <Text>Settings Screen {remainingTime}</Text>
+    </SafeAreaView>
   );
 }
 
-function Settings(): JSX.Element {
-  return <Text>Settings Screen</Text>;
-}
-
 function Home(): JSX.Element {
-  const [appState, setAppState] = useState<AppState>({
-    remainingTime: null,
-    isStarted: false,
-    isFinished: false,
-    mode: 'normal',
-    endDate: null,
-  });
-
+  const {remainingTime, isFinished, isStarted, endDate, mode} = useAppSelector(
+    state => state.app,
+  );
+  const dispatch = useAppDispatch();
   useEffect(() => {
     const calculateRemainingTime = (end: number) => {
       const now = Date.now();
@@ -69,23 +65,16 @@ function Home(): JSX.Element {
     };
 
     let interval: NodeJS.Timeout | null = null;
-    const {isStarted, endDate} = appState;
 
     if (isStarted && endDate) {
       interval = setInterval(() => {
         const remainingSecs = calculateRemainingTime(endDate);
         if (remainingSecs === 0) {
-          setAppState(prevState => ({
-            ...prevState,
-            remainingTime: 0,
-            isStarted: false,
-            isFinished: true,
-          }));
+          dispatch(
+            setAppState({remainingTime: 0, isStarted: false, isFinished: true}),
+          );
         } else {
-          setAppState(prevState => ({
-            ...prevState,
-            remainingTime: remainingSecs,
-          }));
+          dispatch(setAppState({remainingTime: remainingSecs}));
         }
       }, 1000);
     }
@@ -95,11 +84,10 @@ function Home(): JSX.Element {
         clearInterval(interval);
       }
     };
-  }, [appState]);
+  }, [dispatch, endDate, isStarted]);
 
   const handleStartFast = () => {
     const startDate = Date.now();
-    const {isStarted, mode} = appState;
 
     if (!isStarted) {
       if (mode === 'normal' || mode === 'eating') {
@@ -108,13 +96,23 @@ function Home(): JSX.Element {
             startDate + FASTING_TIME,
           ).toLocaleString()}`,
         );
-        setAppState(prevState => ({
-          ...prevState,
-          endDate: startDate + FASTING_TIME,
-          isStarted: true,
-          isFinished: false,
-          mode: 'fasting',
-        }));
+        dispatch(
+          setAppState({
+            endDate: startDate + FASTING_TIME,
+            isStarted: true,
+            isFinished: false,
+            mode: 'fasting',
+          }),
+        );
+
+        // old sstate
+        // setAppState(prevState => ({
+        //   ...prevState,
+        //   endDate: startDate + FASTING_TIME,
+        //   isStarted: true,
+        //   isFinished: false,
+        //   mode: 'fasting',
+        // }));
       }
       if (mode === 'fasting') {
         console.log(
@@ -122,23 +120,30 @@ function Home(): JSX.Element {
             startDate + EATING_TIME,
           ).toLocaleString()}`,
         );
-        setAppState(prevState => ({
-          ...prevState,
-          endDate: startDate + EATING_TIME,
-          isStarted: true,
-          isFinished: false,
-          mode: 'eating',
-        }));
+        dispatch(
+          setAppState({
+            endDate: startDate + EATING_TIME,
+            isStarted: true,
+            isFinished: false,
+            mode: 'eating',
+          }),
+        );
+
+        // setAppState(prevState => ({
+        //   ...prevState,
+        //   endDate: startDate + EATING_TIME,
+        //   isStarted: true,
+        //   isFinished: false,
+        //   mode: 'eating',
+        // }));
       }
     }
   };
 
-  const {remainingTime, isStarted, isFinished, mode} = appState;
-
   return (
     <SafeAreaView style={styles.container}>
       <Countdown value={remainingTime} mode={mode} />
-      <Message mode={mode} finished={isFinished} />
+      <Message mode={mode as Mode} finished={isFinished} />
       <TouchableOpacity
         style={styles.startBtn}
         onPress={handleStartFast}
