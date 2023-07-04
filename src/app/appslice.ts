@@ -6,12 +6,16 @@ interface AppState {
   isFinished: boolean;
   mode: Mode;
   endDate: number | null;
+  fastingTime: number;
+  eatingTime: number;
 }
 
 const initialState: AppState = {
   remainingTime: null,
   isStarted: false,
   isFinished: false,
+  fastingTime: 12 * 1000,
+  eatingTime: 6 * 1000,
   mode: 'normal',
   endDate: null,
 };
