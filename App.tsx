@@ -4,6 +4,7 @@ import {createBottomTabNavigator} from '@react-navigation/bottom-tabs';
 import store from './src/app/store';
 import {Provider} from 'react-redux';
 import {Home, Settings} from './src/screens/';
+import Ionicons from 'react-native-vector-icons/Ionicons';
 
 type RootTabStackParamList = {
   Home: undefined;
@@ -12,19 +13,37 @@ type RootTabStackParamList = {
 
 const Tab = createBottomTabNavigator<RootTabStackParamList>();
 
+const HomeIcon = () => (
+  <Ionicons name="ios-home-outline" size={24} color={'white'} />
+);
+const SettingsIcon = () => (
+  <Ionicons name="ios-settings-outline" size={24} color={'white'} />
+);
+
 function App(): JSX.Element {
   return (
     <Provider store={store}>
       <NavigationContainer>
         <Tab.Navigator
-          screenOptions={{
+          screenOptions={({route}) => ({
+            tabBarIcon: () => {
+              let iconComponent;
+
+              if (route.name === 'Home') {
+                iconComponent = <HomeIcon />;
+              } else if (route.name === 'Settings') {
+                iconComponent = <SettingsIcon />;
+              }
+
+              return iconComponent;
+            },
             headerShown: false,
             tabBarStyle: {
               backgroundColor: '#2e2c30',
               borderTopWidth: 0,
               borderTopColor: 'transparent',
             },
-          }}>
+          })}>
           <Tab.Screen name="Home" component={Home} />
           <Tab.Screen
             options={{

@@ -51,12 +51,12 @@ export function Home(): JSX.Element {
       if (mode === 'normal' || mode === 'eating') {
         console.log(
           `oruc bitis tarihi: ${new Date(
-            startDate + fastingTime,
+            startDate + fastingTime * 1000,
           ).toLocaleString()}`,
         );
         dispatch(
           setAppState({
-            endDate: startDate + fastingTime,
+            endDate: startDate + fastingTime * 1000,
             isStarted: true,
             isFinished: false,
             mode: 'fasting',
@@ -66,12 +66,12 @@ export function Home(): JSX.Element {
       if (mode === 'fasting') {
         console.log(
           `yemek bitis tarihi: ${new Date(
-            startDate + eatingTime,
+            startDate + eatingTime * 1000,
           ).toLocaleString()}`,
         );
         dispatch(
           setAppState({
-            endDate: startDate + eatingTime,
+            endDate: startDate + eatingTime * 1000,
             isStarted: true,
             isFinished: false,
             mode: 'eating',

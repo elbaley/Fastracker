@@ -2,8 +2,10 @@ import {useEffect} from 'react';
 import {View, Text, StyleSheet} from 'react-native';
 import {Mode} from '../app/appslice';
 import {CircularProgressBase} from 'react-native-circular-progress-indicator/';
+import {useAppSelector} from '../app/store';
 
 const Countdown = ({value, mode}: any): JSX.Element => {
+  const {fastingTime, eatingTime} = useAppSelector(state => state.app);
   function secondsToTimeString(seconds: number) {
     const hours = Math.floor(seconds / 3600);
     const minutes = Math.floor((seconds % 3600) / 60);
@@ -22,12 +24,12 @@ const Countdown = ({value, mode}: any): JSX.Element => {
     currentMode: Mode,
   ): number => {
     if (currentMode === 'eating') {
-      const percent = Math.floor((currentValue / 6) * 100);
+      const percent = Math.floor((currentValue / eatingTime) * 100);
       console.log(`${percent} dönüyom`);
       return percent;
     }
     if (currentMode === 'fasting') {
-      const percent = Math.floor((currentValue / 12) * 100);
+      const percent = Math.floor((currentValue / fastingTime) * 100);
       console.log(`${percent} dönüyom`);
 
       return percent;

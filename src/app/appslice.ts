@@ -14,8 +14,8 @@ const initialState: AppState = {
   remainingTime: null,
   isStarted: false,
   isFinished: false,
-  fastingTime: 12 * 1000,
-  eatingTime: 6 * 1000,
+  fastingTime: 12,
+  eatingTime: 6,
   mode: 'normal',
   endDate: null,
 };
@@ -27,6 +27,12 @@ export const appSlice = createSlice({
     setAppState: (state, action: PayloadAction<Partial<AppState>>) => {
       console.log('Setting app state,');
       return {...state, ...action.payload};
+    },
+    setFastingTime: (state, action: PayloadAction<number>) => {
+      state.fastingTime = action.payload;
+    },
+    setEatingTime: (state, action: PayloadAction<number>) => {
+      state.eatingTime = action.payload;
     },
     setRemainingTime: (state, action) => {
       state.remainingTime = action.payload;
@@ -53,6 +59,8 @@ export const {
   setMode,
   setEndDate,
   setAppState,
+  setFastingTime,
+  setEatingTime,
 } = appSlice.actions;
 
 //
