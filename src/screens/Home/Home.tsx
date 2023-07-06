@@ -4,6 +4,7 @@ import {setAppState} from '../../app/appslice';
 import {useAppDispatch, useAppSelector} from '../../app/store';
 import Countdown from '../../components/Countdown';
 import Message from '../../components/Message';
+import {sendScheduledNotification} from '../../utils/sendScheduledNotification';
 import {styles} from './Home.styles';
 export function Home(): JSX.Element {
   const {
@@ -62,6 +63,12 @@ export function Home(): JSX.Element {
             mode: 'fasting',
           }),
         );
+        let notificationDate = new Date(startDate + fastingTime * 1000);
+        sendScheduledNotification(
+          `${endDate}fasting`,
+          'Fasting completed!',
+          notificationDate,
+        );
       }
       if (mode === 'fasting') {
         console.log(
@@ -76,6 +83,12 @@ export function Home(): JSX.Element {
             isFinished: false,
             mode: 'eating',
           }),
+        );
+        let notificationDate = new Date(startDate + eatingTime * 1000);
+        sendScheduledNotification(
+          `${endDate}eating`,
+          'Eating completed!',
+          notificationDate,
         );
       }
     }

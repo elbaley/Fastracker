@@ -1,11 +1,10 @@
 import {NavigationContainer} from '@react-navigation/native';
-import React from 'react';
+import React, {useEffect} from 'react';
 import {createBottomTabNavigator} from '@react-navigation/bottom-tabs';
 import store from './src/app/store';
 import {Provider} from 'react-redux';
 import {Home, Settings} from './src/screens/';
 import Ionicons from 'react-native-vector-icons/Ionicons';
-
 type RootTabStackParamList = {
   Home: undefined;
   Settings: undefined;
@@ -21,6 +20,14 @@ const SettingsIcon = () => (
 );
 
 function App(): JSX.Element {
+  useEffect(() => {
+    // ## TODO GET permissions at initial screen!
+    // const requestNotificationPermissions = async () => {
+    //   const permissions = await PushNotificationIOS.requestPermissions();
+    //   console.log('Notification Permissions:', permissions);
+    // };
+    // requestNotificationPermissions();
+  }, []);
   return (
     <Provider store={store}>
       <NavigationContainer>
