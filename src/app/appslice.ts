@@ -10,7 +10,7 @@ interface AppState {
   eatingTime: number;
 }
 
-const initialState: AppState = {
+export const initialState: AppState = {
   remainingTime: null,
   isStarted: false,
   isFinished: false,

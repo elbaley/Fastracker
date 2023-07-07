@@ -28,7 +28,7 @@ export function Home(): JSX.Element {
     if (isStarted && endDate) {
       interval = setInterval(() => {
         const remainingSecs = calculateRemainingTime(endDate);
-        if (remainingSecs === 0) {
+        if (remainingSecs === 0 || remainingSecs < 0) {
           dispatch(
             setAppState({remainingTime: 0, isStarted: false, isFinished: true}),
           );

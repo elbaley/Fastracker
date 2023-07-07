@@ -5,6 +5,7 @@ import {setFastingTime, setEatingTime} from '../../app/appslice';
 import TimePickerModal from '../../components/TimePickerModal';
 export function Settings(): JSX.Element {
   const {fastingTime, eatingTime} = useAppSelector(state => state.app);
+
   const dispatch = useAppDispatch();
   return (
     <SafeAreaView style={styles.settingsContainer}>
