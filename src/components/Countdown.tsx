@@ -25,24 +25,21 @@ const Countdown = ({value, mode}: any): JSX.Element => {
   ): number => {
     if (currentMode === 'eating') {
       const percent = Math.floor((currentValue / eatingTime) * 100);
-      console.log(`${percent} dönüyom`);
       return percent;
     }
     if (currentMode === 'fasting') {
       const percent = Math.floor((currentValue / fastingTime) * 100);
-      console.log(`${percent} dönüyom`);
-
       return percent;
     }
 
     return 0;
   };
   useEffect(() => {
-    console.log('Countdown render edildi');
-    console.log({value, mode});
+    // console.log('Countdown render edildi');
+    // console.log({value, mode});
 
     return () => {
-      console.log('Countdown unmount edildi!!');
+      // console.log('Countdown unmount edildi!!');
     };
   }, [value, mode]);
   return (

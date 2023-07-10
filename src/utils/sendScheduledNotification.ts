@@ -1,14 +1,37 @@
-import PushNotificationIOS from '@react-native-community/push-notification-ios';
-export const sendScheduledNotification = (
+import notifee, {
+  AndroidImportance,
+  TimestampTrigger,
+  TriggerType,
+} from '@notifee/react-native';
+export const sendScheduledNotification = async (
   id: string,
   message: string,
   fireDate: Date,
-): void => {
-  const request = {
-    id: id,
-    title: 'Fastracker',
-    body: message,
-    fireDate: fireDate,
+): Promise<void> => {
+  const trigger: TimestampTrigger = {
+    type: TriggerType.TIMESTAMP,
+    timestamp: fireDate.getTime(),
   };
-  PushNotificationIOS.addNotificationRequest(request);
+  // Create a channel (required for Android)
+  const channelId = await notifee.createChannel({
+    id: 'time',
+    name: 'Time Channel',
+    sound: 'default',
+    importance: AndroidImportance.HIGH,
+  });
+
+  await notifee.createTriggerNotification(
+    {
+      id,
+      title: 'Fastracker',
+      body: message,
+      android: {
+        channelId,
+        pressAction: {
+          id: 'default',
+        },
+      },
+    },
+    trigger,
+  );
 };

@@ -13,7 +13,6 @@ import {
 import Ionicons from 'react-native-vector-icons/Ionicons';
 import {PersistGate} from 'redux-persist/integration/react';
 import {clearPersistedState} from './src/utils/clearPersistedState';
-import PushNotificationIOS from '@react-native-community/push-notification-ios';
 import {createNativeStackNavigator} from '@react-navigation/native-stack';
 type RootTabStackParamList = {
   Home: undefined;
