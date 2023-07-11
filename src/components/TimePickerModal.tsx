@@ -48,6 +48,7 @@ const TimePickerModal = ({
           <View>
             <Picker
               mode="dropdown"
+              dropdownIconColor="white"
               selectedValue={selectedTime}
               onValueChange={itemValue => {
                 onChangeTime(itemValue);
@@ -58,6 +59,9 @@ const TimePickerModal = ({
                   color="white"
                   label={`${index + 1}`}
                   value={index + 1}
+                  style={{
+                    backgroundColor: '#292931',
+                  }}
                 />
               ))}
             </Picker>
