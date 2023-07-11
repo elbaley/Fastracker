@@ -15,6 +15,7 @@ export const styles = StyleSheet.create({
   },
   nextButton: {
     backgroundColor: '#FF002E',
+    marginTop: 15,
     padding: 16,
     borderRadius: 15,
   },
