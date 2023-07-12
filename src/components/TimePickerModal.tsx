@@ -15,6 +15,12 @@ const TimePickerModal = ({
   selectedTime,
 }: TimePickerModalProps): JSX.Element => {
   const [showModal, setShowModal] = useState(false);
+  const [time, setTime] = useState<number>(selectedTime);
+
+  function updateTime() {
+    onChangeTime(time);
+    setShowModal(false);
+  }
 
   return (
     <View style={styles.pickerContainer}>
@@ -49,9 +55,10 @@ const TimePickerModal = ({
             <Picker
               mode="dropdown"
               dropdownIconColor="white"
-              selectedValue={selectedTime}
+              selectedValue={time}
               onValueChange={itemValue => {
-                onChangeTime(itemValue);
+                setTime(itemValue);
+                // onChangeTime(itemValue);
               }}>
               {Array.from({length: 24}, (_, index) => (
                 <Picker.Item
@@ -59,12 +66,13 @@ const TimePickerModal = ({
                   color="white"
                   label={`${index + 1}`}
                   value={index + 1}
-                  style={{
-                    backgroundColor: '#292931',
-                  }}
+                  style={styles.pickerBackground}
                 />
               ))}
             </Picker>
+            <TouchableOpacity onPress={updateTime} style={styles.saveButton}>
+              <Text style={styles.saveButtonText}>Save</Text>
+            </TouchableOpacity>
           </View>
         </View>
       </Modal>
@@ -76,18 +84,23 @@ export const styles = StyleSheet.create({
     borderBottomColor: '#3c3c43',
     borderBottomWidth: 1,
   },
+  pickerBackground: {
+    backgroundColor: '#292931',
+  },
   modal: {
     justifyContent: 'flex-end',
     margin: 0,
   },
   modalContent: {
     backgroundColor: '#292931',
-    padding: 16,
+    paddingHorizontal: 40,
+    paddingBottom: 20,
   },
   modalHeader: {
+    paddingTop: 10,
     color: 'white',
     fontWeight: 'bold',
-    fontSize: 16,
+    fontSize: 18,
     textAlign: 'center',
   },
   label: {
@@ -108,6 +121,19 @@ export const styles = StyleSheet.create({
   row: {
     flexDirection: 'row',
     justifyContent: 'space-between',
+  },
+  saveButton: {
+    // backgroundColor: '#FF002E',
+    backgroundColor: 'red',
+    borderRadius: 10,
+    padding: 14,
+    marginTop: 15,
+    marginBottom: 15,
+  },
+  saveButtonText: {
+    color: 'white',
+    fontSize: 16,
+    textAlign: 'center',
   },
 });
 

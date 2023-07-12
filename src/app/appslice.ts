@@ -25,7 +25,8 @@ export const appSlice = createSlice({
   initialState,
   reducers: {
     setAppState: (state, action: PayloadAction<Partial<AppState>>) => {
-      console.log('Setting app state,');
+      console.log('Setting app state to:');
+      console.log({...state, ...action.payload});
       return {...state, ...action.payload};
     },
     setFastingTime: (state, action: PayloadAction<number>) => {

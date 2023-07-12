@@ -13,6 +13,7 @@ import Ionicons from 'react-native-vector-icons/Ionicons';
 import {PersistGate} from 'redux-persist/integration/react';
 import {clearPersistedState} from './src/utils/clearPersistedState';
 import {createNativeStackNavigator} from '@react-navigation/native-stack';
+import {StatusBar} from 'react-native';
 type RootTabStackParamList = {
   Home: undefined;
   Settings: undefined;
@@ -28,6 +29,7 @@ function App(): JSX.Element {
   return (
     <Provider store={store}>
       <PersistGate persistor={persistor}>
+        <StatusBar backgroundColor="#292931" barStyle="light-content" />
         <NavigationContainer>
           <Stack.Navigator>
             <Stack.Screen
@@ -99,13 +101,13 @@ function AppScreen(): JSX.Element {
           headerStyle: {
             backgroundColor: '#2e2c30',
             borderWidth: 0,
-            borderColor: 'red',
             elevation: 0,
             shadowOpacity: 0,
           },
           headerTitleStyle: {
             color: 'white',
           },
+          headerTitleAlign: 'center',
         }}
         name="Settings"
         component={Settings}

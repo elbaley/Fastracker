@@ -5,7 +5,9 @@ import {CircularProgressBase} from 'react-native-circular-progress-indicator/';
 import {useAppSelector} from '../app/store';
 
 const Countdown = ({value, mode}: any): JSX.Element => {
-  const {fastingTime, eatingTime} = useAppSelector(state => state.app);
+  const {fastingTime, eatingTime, isFinished} = useAppSelector(
+    state => state.app,
+  );
   function secondsToTimeString(seconds: number) {
     const hours = Math.floor(seconds / 3600);
     const minutes = Math.floor((seconds % 3600) / 60);
@@ -54,7 +56,11 @@ const Countdown = ({value, mode}: any): JSX.Element => {
         inActiveStrokeColor="#FF002E"
         maxValue={100}
         children={
-          <Text style={styles.textContainer}>{secondsToTimeString(value)}</Text>
+          !isFinished && (
+            <Text style={styles.textContainer}>
+              {secondsToTimeString(value)}
+            </Text>
+          )
         }
       />
     </View>

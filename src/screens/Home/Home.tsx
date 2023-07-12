@@ -3,9 +3,11 @@ import {SafeAreaView, TouchableOpacity, Text} from 'react-native';
 import {setAppState} from '../../app/appslice';
 import {useAppDispatch, useAppSelector} from '../../app/store';
 import Countdown from '../../components/Countdown';
+import {FocusAwareStatusBar} from '../../components/FocusAwareStatusBar';
 import Message from '../../components/Message';
 import {sendScheduledNotification} from '../../utils/sendScheduledNotification';
 import {styles} from './Home.styles';
+import notifee from '@notifee/react-native';
 export function Home(): JSX.Element {
   const {
     remainingTime,
@@ -65,7 +67,7 @@ export function Home(): JSX.Element {
         );
         let notificationDate = new Date(startDate + fastingTime * 1000);
         sendScheduledNotification(
-          `${endDate}fasting`,
+          `${endDate}-fasting`,
           'Fasting completed!',
           notificationDate,
         );
@@ -91,18 +93,32 @@ export function Home(): JSX.Element {
           notificationDate,
         );
       }
+    } else {
+      console.log('Zaten calisiyor su an iptal edelim');
+      // cancel state
+      dispatch(
+        setAppState({
+          endDate: null,
+          isStarted: false,
+          isFinished: true,
+          mode: mode === 'fasting' ? 'eating' : 'fasting',
+          remainingTime: null,
+        }),
+      );
+      // cancel notification
+      notifee.getTriggerNotificationIds().then(ids => {
+        notifee.cancelTriggerNotifications(ids);
+      });
     }
   };
 
   return (
     <SafeAreaView style={styles.container}>
+      <FocusAwareStatusBar backgroundColor="#292931" barStyle="light-content" />
       <Countdown value={remainingTime} mode={mode} />
       <Message mode={mode} finished={isFinished} />
-      <TouchableOpacity
-        style={styles.startBtn}
-        onPress={handleStartFast}
-        disabled={isStarted}>
-        <Text style={styles.startBtnText}>Start</Text>
+      <TouchableOpacity style={styles.startBtn} onPress={handleStartFast}>
+        <Text style={styles.startBtnText}>{isStarted ? 'Stop' : 'Start'}</Text>
       </TouchableOpacity>
     </SafeAreaView>
   );
