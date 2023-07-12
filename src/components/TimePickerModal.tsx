@@ -33,7 +33,7 @@ const TimePickerModal = ({
       </TouchableOpacity>
       <Modal
         style={styles.modal}
-        backdropOpacity={0.5}
+        backdropOpacity={0.7}
         onBackdropPress={() => setShowModal(false)}
         // ## TODO add swipe to close functionality!
         // onSwipeComplete={() => setShowModal(false)}

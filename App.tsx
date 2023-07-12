@@ -2,7 +2,6 @@ import {NavigationContainer} from '@react-navigation/native';
 import React, {useEffect} from 'react';
 import {createBottomTabNavigator} from '@react-navigation/bottom-tabs';
 import store, {persistor} from './src/app/store';
-import {View, Text, SafeAreaView, TouchableOpacity} from 'react-native';
 import {Provider} from 'react-redux';
 import {
   Home,
@@ -22,26 +21,13 @@ type RootTabStackParamList = {
 const Tab = createBottomTabNavigator<RootTabStackParamList>();
 const Stack = createNativeStackNavigator(); // bunu import ettim kullanirsin
 
-const HomeIcon = () => (
-  <Ionicons name="ios-home-outline" size={24} color={'white'} />
-);
-const SettingsIcon = () => (
-  <Ionicons name="ios-settings-outline" size={24} color={'white'} />
-);
-
 function App(): JSX.Element {
   useEffect(() => {
     // clearPersistedState();
   }, []);
   return (
     <Provider store={store}>
-      <PersistGate
-        loading={
-          <View>
-            <Text>Yukleniyor agamm</Text>
-          </View>
-        }
-        persistor={persistor}>
+      <PersistGate persistor={persistor}>
         <NavigationContainer>
           <Stack.Navigator>
             <Stack.Screen
@@ -70,18 +56,36 @@ function AppScreen(): JSX.Element {
   return (
     <Tab.Navigator
       screenOptions={({route}) => ({
-        tabBarIcon: () => {
-          let iconComponent;
-
-          if (route.name === 'Home') {
-            iconComponent = <HomeIcon />;
-          } else if (route.name === 'Settings') {
-            iconComponent = <SettingsIcon />;
-          }
-
-          return iconComponent;
+        //@eslint/disable-next-line
+        tabBarIcon: ({focused}) => {
+          type Icon = {
+            name: keyof RootTabStackParamList;
+            inactiveIcon: string;
+            activeIcon: string;
+          };
+          const icons: Icon[] = [
+            {
+              name: 'Home',
+              inactiveIcon: 'ios-home-outline',
+              activeIcon: 'ios-home',
+            },
+            {
+              name: 'Settings',
+              inactiveIcon: 'ios-settings-outline',
+              activeIcon: 'ios-settings',
+            },
+          ];
+          const icon = icons.find(item => item.name === route.name);
+          return (
+            <Ionicons
+              name={focused ? icon!.activeIcon : icon!.inactiveIcon}
+              size={24}
+              color={'white'}
+            />
+          );
         },
         headerShown: false,
+        tabBarShowLabel: false,
         tabBarStyle: {
           backgroundColor: '#2e2c30',
           borderTopWidth: 0,
