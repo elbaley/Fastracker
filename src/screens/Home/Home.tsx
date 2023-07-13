@@ -1,6 +1,6 @@
 import React, {useEffect} from 'react';
 import {SafeAreaView, TouchableOpacity, Text} from 'react-native';
-import {setAppState} from '../../app/appslice';
+import {Mode, setAppState} from '../../app/appslice';
 import {useAppDispatch, useAppSelector} from '../../app/store';
 import Countdown from '../../components/Countdown';
 import {FocusAwareStatusBar} from '../../components/FocusAwareStatusBar';
@@ -47,68 +47,58 @@ export function Home(): JSX.Element {
     };
   }, [dispatch, endDate, isStarted]);
 
-  const handleStartFast = () => {
+  const handleFastCompletion = () => {
     const startDate = Date.now();
+    let newMode: Mode;
 
-    if (!isStarted) {
-      if (mode === 'normal' || mode === 'eating') {
-        console.log(
-          `oruc bitis tarihi: ${new Date(
-            startDate + fastingTime * 1000,
-          ).toLocaleString()}`,
-        );
-        dispatch(
-          setAppState({
-            endDate: startDate + fastingTime * 1000,
-            isStarted: true,
-            isFinished: false,
-            mode: 'fasting',
-          }),
-        );
-        let notificationDate = new Date(startDate + fastingTime * 1000);
-        sendScheduledNotification(
-          `${endDate}-fasting`,
-          'Fasting completed!',
-          notificationDate,
-        );
-      }
-      if (mode === 'fasting') {
-        console.log(
-          `yemek bitis tarihi: ${new Date(
-            startDate + eatingTime * 1000,
-          ).toLocaleString()}`,
-        );
-        dispatch(
-          setAppState({
-            endDate: startDate + eatingTime * 1000,
-            isStarted: true,
-            isFinished: false,
-            mode: 'eating',
-          }),
-        );
-        let notificationDate = new Date(startDate + eatingTime * 1000);
-        sendScheduledNotification(
-          `${endDate}eating`,
-          'Eating completed!',
-          notificationDate,
-        );
-      }
-    } else {
-      console.log('Zaten calisiyor su an iptal edelim');
-      // cancel state
-      dispatch(
-        setAppState({
-          endDate: null,
-          isStarted: false,
-          isFinished: true,
-          mode: mode === 'fasting' ? 'eating' : 'fasting',
-          remainingTime: null,
-        }),
+    if (mode === 'normal' || mode === 'eating') {
+      newMode = 'fasting';
+      sendScheduledNotification(
+        `${endDate}-fasting`,
+        'Fasting completed!',
+        new Date(startDate + fastingTime * 1000),
       );
-      // cancel notification
-      notifee.getTriggerNotificationIds().then(ids => {
-        notifee.cancelTriggerNotifications(ids);
-      });
+    } else {
+      newMode = 'eating';
+      sendScheduledNotification(
+        `${endDate}-eating`,
+        'Eating completed!',
+        new Date(startDate + eatingTime * 1000),
+      );
+    }
+
+    dispatch(
+      setAppState({
+        endDate:
+          startDate + (newMode === 'fasting' ? fastingTime : eatingTime) * 1000,
+        isStarted: true,
+        isFinished: false,
+        mode: newMode,
+      }),
+    );
+  };
+
+  const cancelFast = () => {
+    dispatch(
+      setAppState({
+        endDate: null,
+        isStarted: false,
+        isFinished: true,
+        mode: mode === 'fasting' ? 'eating' : 'fasting',
+        remainingTime: null,
+      }),
+    );
+    // cancel notifications
+    notifee.getTriggerNotificationIds().then(ids => {
+      notifee.cancelTriggerNotifications(ids);
+    });
+  };
+
+  const handleStartFast = () => {
+    if (!isStarted) {
+      handleFastCompletion();
+    } else {
+      cancelFast();
     }
   };
 
