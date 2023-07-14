@@ -6,4 +6,7 @@ module.exports = {
     'react/jsx-uses-react': 'off',
     'react/no-unstable-nested-components': 'off',
   },
+  env: {
+    jest: true,
+  },
 };

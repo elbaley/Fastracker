@@ -8,6 +8,7 @@ export const sendScheduledNotification = async (
   message: string,
   fireDate: Date,
 ): Promise<void> => {
+  console.log('real function working...');
   const trigger: TimestampTrigger = {
     type: TriggerType.TIMESTAMP,
     timestamp: fireDate.getTime(),

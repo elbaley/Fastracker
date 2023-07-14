@@ -1,4 +1,4 @@
-import {configureStore} from '@reduxjs/toolkit';
+import {configureStore, PreloadedState} from '@reduxjs/toolkit';
 import {TypedUseSelectorHook, useDispatch, useSelector} from 'react-redux';
 import {
   persistStore,
@@ -31,7 +31,19 @@ const store = configureStore({
     }),
 });
 
+export const setupStore = (
+  preloadedState?: PreloadedState<RootState>,
+): ReturnType<typeof configureStore> => {
+  return configureStore({
+    reducer: {
+      app: persistedReducer,
+    },
+    preloadedState,
+  });
+};
+
 export type RootState = ReturnType<typeof store.getState>;
+export type AppStore = ReturnType<typeof setupStore>;
 export type AppDispatch = typeof store.dispatch;
 
 export const useAppDispatch: () => AppDispatch = useDispatch;

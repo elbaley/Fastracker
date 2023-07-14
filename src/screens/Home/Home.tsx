@@ -20,6 +20,8 @@ export function Home(): JSX.Element {
   } = useAppSelector(state => state.app);
   const dispatch = useAppDispatch();
   useEffect(() => {
+    // console.log('Home state ✅✅✅');
+    // console.log({endDate, isStarted, isFinished});
     const calculateRemainingTime = (end: number) => {
       const now = Date.now();
       return Math.ceil((end - now) / 1000);
@@ -29,6 +31,7 @@ export function Home(): JSX.Element {
 
     if (isStarted && endDate) {
       interval = setInterval(() => {
+        console.log('set interval calsiiyorr');
         const remainingSecs = calculateRemainingTime(endDate);
         if (remainingSecs === 0 || remainingSecs < 0) {
           dispatch(

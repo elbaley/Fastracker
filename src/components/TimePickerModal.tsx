@@ -26,7 +26,9 @@ const TimePickerModal = ({
     <View style={styles.pickerContainer}>
       <TouchableOpacity
         style={styles.label}
+        testID={`update-${label.toLowerCase()}`}
         onPress={() => {
+          console.log('bana verilen label', label.toLowerCase());
           setShowModal(!showModal);
         }}>
         <View style={styles.row}>
@@ -53,6 +55,7 @@ const TimePickerModal = ({
           <Text style={styles.modalHeader}>{label} Time</Text>
           <View>
             <Picker
+              testID="picker"
               mode="dropdown"
               dropdownIconColor="white"
               selectedValue={time}
@@ -70,7 +73,10 @@ const TimePickerModal = ({
                 />
               ))}
             </Picker>
-            <TouchableOpacity onPress={updateTime} style={styles.saveButton}>
+            <TouchableOpacity
+              testID="save-button"
+              onPress={updateTime}
+              style={styles.saveButton}>
               <Text style={styles.saveButtonText}>Save</Text>
             </TouchableOpacity>
           </View>

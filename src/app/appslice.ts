@@ -1,6 +1,6 @@
 import {createSlice, PayloadAction} from '@reduxjs/toolkit';
 export type Mode = 'normal' | 'fasting' | 'eating';
-interface AppState {
+export interface AppState {
   remainingTime: number | null;
   isStarted: boolean;
   isFinished: boolean;

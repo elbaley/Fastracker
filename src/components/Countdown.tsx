@@ -57,7 +57,7 @@ const Countdown = ({value, mode}: any): JSX.Element => {
         maxValue={100}
         children={
           !isFinished && (
-            <Text style={styles.textContainer}>
+            <Text testID="remaining-time" style={styles.textContainer}>
               {secondsToTimeString(value)}
             </Text>
           )
