@@ -1,4 +1,4 @@
-package com.fastracker;
+package com.furkanleba.fastracker;
 
 import android.app.Application;
 import com.facebook.react.PackageList;

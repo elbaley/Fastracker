@@ -1,4 +1,4 @@
-package com.fastracker;
+package com.furkanleba.fastracker;
 
 import com.facebook.react.ReactActivity;
 import com.facebook.react.ReactActivityDelegate;

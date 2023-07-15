@@ -1,0 +1,39 @@
+{
+  "project_info": {
+    "project_number": "635903087547",
+    "project_id": "fastracker-ba66b",
+    "storage_bucket": "fastracker-ba66b.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:635903087547:android:a62f44d9fad5928d356a9e",
+        "android_client_info": {
+          "package_name": "com.furkanleba.fastracker"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "635903087547-lkimpnagbrvn96tr1pi0ittv0l72qprk.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCW0C4RPp-7s0S9WiHiYLjc4OI-CoqG79A"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "635903087547-lkimpnagbrvn96tr1pi0ittv0l72qprk.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
