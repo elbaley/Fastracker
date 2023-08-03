@@ -28,7 +28,6 @@ const TimePickerModal = ({
         style={styles.label}
         testID={`update-${label.toLowerCase()}`}
         onPress={() => {
-          console.log('bana verilen label', label.toLowerCase());
           setShowModal(!showModal);
         }}>
         <View style={styles.row}>
@@ -129,8 +128,7 @@ export const styles = StyleSheet.create({
     justifyContent: 'space-between',
   },
   saveButton: {
-    // backgroundColor: '#FF002E',
-    backgroundColor: 'red',
+    backgroundColor: '#FF002E',
     borderRadius: 10,
     padding: 14,
     marginTop: 15,

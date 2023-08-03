@@ -8,6 +8,7 @@ export interface AppState {
   endDate: number | null;
   fastingTime: number;
   eatingTime: number;
+  showSaveFastingModal: boolean;
 }
 
 export const initialState: AppState = {
@@ -18,6 +19,7 @@ export const initialState: AppState = {
   eatingTime: 6,
   mode: 'normal',
   endDate: null,
+  showSaveFastingModal: true,
 };
 
 export const appSlice = createSlice({
@@ -50,6 +52,9 @@ export const appSlice = createSlice({
     setEndDate: (state, action) => {
       state.endDate = action.payload;
     },
+    setShowSaveModal: (state, action) => {
+      state.showSaveFastingModal = action.payload;
+    },
   },
 });
 
@@ -62,6 +67,7 @@ export const {
   setAppState,
   setFastingTime,
   setEatingTime,
+  setShowSaveModal,
 } = appSlice.actions;
 
 //

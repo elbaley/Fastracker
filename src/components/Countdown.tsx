@@ -1,4 +1,3 @@
-import {useEffect} from 'react';
 import {View, Text, StyleSheet} from 'react-native';
 import {Mode} from '../app/appslice';
 import {CircularProgressBase} from 'react-native-circular-progress-indicator/';
@@ -36,14 +35,6 @@ const Countdown = ({value, mode}: any): JSX.Element => {
 
     return 0;
   };
-  useEffect(() => {
-    // console.log('Countdown render edildi');
-    // console.log({value, mode});
-
-    return () => {
-      // console.log('Countdown unmount edildi!!');
-    };
-  }, [value, mode]);
   return (
     <View>
       <CircularProgressBase

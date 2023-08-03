@@ -31,12 +31,29 @@ export function Home(): JSX.Element {
 
     if (isStarted && endDate) {
       interval = setInterval(() => {
-        console.log('set interval calsiiyorr');
         const remainingSecs = calculateRemainingTime(endDate);
+        // sesion finished
         if (remainingSecs === 0 || remainingSecs < 0) {
-          dispatch(
-            setAppState({remainingTime: 0, isStarted: false, isFinished: true}),
-          );
+          // fasting session finished
+          if (mode === 'fasting') {
+            dispatch(
+              setAppState({
+                remainingTime: 0,
+                isStarted: false,
+                isFinished: true,
+                showSaveFastingModal: true,
+              }),
+            );
+          } else {
+            // eating session finished
+            dispatch(
+              setAppState({
+                remainingTime: 0,
+                isStarted: false,
+                isFinished: true,
+              }),
+            );
+          }
         } else {
           dispatch(setAppState({remainingTime: remainingSecs}));
         }
@@ -48,7 +65,7 @@ export function Home(): JSX.Element {
         clearInterval(interval);
       }
     };
-  }, [dispatch, endDate, isStarted]);
+  }, [dispatch, endDate, isStarted, mode]);
 
   const handleFastCompletion = () => {
     const startDate = Date.now();

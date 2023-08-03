@@ -6,7 +6,6 @@ import TimePickerModal from '../../components/TimePickerModal';
 import {FocusAwareStatusBar} from '../../components/FocusAwareStatusBar';
 export function Settings(): JSX.Element {
   const {fastingTime, eatingTime} = useAppSelector(state => state.app);
-
   const dispatch = useAppDispatch();
   return (
     <SafeAreaView style={styles.settingsContainer}>

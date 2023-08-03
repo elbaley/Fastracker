@@ -1,56 +1,56 @@
 import {NavigationContainer} from '@react-navigation/native';
 import React, {useEffect} from 'react';
 import {createBottomTabNavigator} from '@react-navigation/bottom-tabs';
-import store, {persistor} from './src/app/store';
-import {Provider} from 'react-redux';
 import {
+  History,
   Home,
   OnboardingNotification,
   OnboardingTime,
   Settings,
 } from './src/screens/';
 import Ionicons from 'react-native-vector-icons/Ionicons';
-import {PersistGate} from 'redux-persist/integration/react';
-import {clearPersistedState} from './src/utils/clearPersistedState';
+// import {clearPersistedState} from './src/utils/clearPersistedState';
 import {createNativeStackNavigator} from '@react-navigation/native-stack';
-import {StatusBar} from 'react-native';
+import {signInAnonymously} from './src/auth';
+import SaveFastingModal from './src/components/SaveFastingModal';
+import {useAppSelector} from './src/app/store';
+import { Text } from 'react-native';
 type RootTabStackParamList = {
   Home: undefined;
   Settings: undefined;
+  History: undefined;
 };
 
 const Tab = createBottomTabNavigator<RootTabStackParamList>();
-const Stack = createNativeStackNavigator(); // bunu import ettim kullanirsin
+const Stack = createNativeStackNavigator();
 
 function App(): JSX.Element {
+  const {showSaveFastingModal} = useAppSelector(state => state.app);
   useEffect(() => {
     // clearPersistedState();
+    signInAnonymously();
   }, []);
   return (
-    <Provider store={store}>
-      <PersistGate persistor={persistor}>
-        <StatusBar backgroundColor="#292931" barStyle="light-content" />
-        <NavigationContainer>
-          <Stack.Navigator>
-            <Stack.Screen
-              name="OnboardingNotification"
-              component={OnboardingNotification}
-              options={{headerShown: false}}
-            />
-            <Stack.Screen
-              name="OnboardingTime"
-              component={OnboardingTime}
-              options={{headerShown: false}}
-            />
-            <Stack.Screen
-              name="AppScreen"
-              component={AppScreen}
-              options={{headerShown: false, gestureEnabled: false}}
-            />
-          </Stack.Navigator>
-        </NavigationContainer>
-      </PersistGate>
-    </Provider>
+    <NavigationContainer>
+      {showSaveFastingModal && <SaveFastingModal />}
+      <Stack.Navigator>
+        <Stack.Screen
+          name="OnboardingNotification"
+          component={OnboardingNotification}
+          options={{headerShown: false}}
+        />
+        <Stack.Screen
+          name="OnboardingTime"
+          component={OnboardingTime}
+          options={{headerShown: false}}
+        />
+        <Stack.Screen
+          name="AppScreen"
+          component={AppScreen}
+          options={{headerShown: false, gestureEnabled: false}}
+        />
+      </Stack.Navigator>
+    </NavigationContainer>
   );
 }
 
@@ -58,7 +58,6 @@ function AppScreen(): JSX.Element {
   return (
     <Tab.Navigator
       screenOptions={({route}) => ({
-        //@eslint/disable-next-line
         tabBarIcon: ({focused}) => {
           type Icon = {
             name: keyof RootTabStackParamList;
@@ -72,6 +71,11 @@ function AppScreen(): JSX.Element {
               activeIcon: 'ios-home',
             },
             {
+              name: 'History',
+              inactiveIcon: 'ios-calendar-outline',
+              activeIcon: 'ios-calendar',
+            },
+            {
               name: 'Settings',
               inactiveIcon: 'ios-settings-outline',
               activeIcon: 'ios-settings',
@@ -82,7 +86,7 @@ function AppScreen(): JSX.Element {
             <Ionicons
               name={focused ? icon!.activeIcon : icon!.inactiveIcon}
               size={24}
-              color={'white'}
+              color="white"
             />
           );
         },
@@ -95,6 +99,23 @@ function AppScreen(): JSX.Element {
         },
       })}>
       <Tab.Screen name="Home" component={Home} />
+      <Tab.Screen
+        options={{
+          headerShown: true,
+          headerStyle: {
+            backgroundColor: '#2e2c30',
+            borderWidth: 0,
+            elevation: 0,
+            shadowOpacity: 0,
+          },
+          headerTitleStyle: {
+            color: 'white',
+          },
+          headerTitleAlign: 'center',
+        }}
+        name="History"
+        component={History}
+      />
       <Tab.Screen
         options={{
           headerShown: true,
