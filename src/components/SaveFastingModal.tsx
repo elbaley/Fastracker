@@ -53,7 +53,7 @@ const SaveFastingModal = () => {
 
 const styles = StyleSheet.create({
   container: {
-    backgroundColor: '#292931',
+    backgroundColor: '#25272b',
     height: 200,
     borderRadius: 16,
     padding: 16,

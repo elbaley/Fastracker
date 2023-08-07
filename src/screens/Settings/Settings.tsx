@@ -9,7 +9,7 @@ export function Settings(): JSX.Element {
   const dispatch = useAppDispatch();
   return (
     <SafeAreaView style={styles.settingsContainer}>
-      <FocusAwareStatusBar backgroundColor="#2e2c30" barStyle="light-content" />
+      <FocusAwareStatusBar backgroundColor="#1a1d20" barStyle="light-content" />
       <View>
         <TimePickerModal
           selectedTime={fastingTime}

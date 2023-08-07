@@ -90,14 +90,14 @@ export const styles = StyleSheet.create({
     borderBottomWidth: 1,
   },
   pickerBackground: {
-    backgroundColor: '#292931',
+    backgroundColor: '#25272b',
   },
   modal: {
     justifyContent: 'flex-end',
     margin: 0,
   },
   modalContent: {
-    backgroundColor: '#292931',
+    backgroundColor: '#25272b',
     paddingHorizontal: 40,
     paddingBottom: 20,
   },

@@ -14,7 +14,7 @@ import {createNativeStackNavigator} from '@react-navigation/native-stack';
 import {signInAnonymously} from './src/auth';
 import SaveFastingModal from './src/components/SaveFastingModal';
 import {useAppSelector} from './src/app/store';
-import { Text } from 'react-native';
+import {Text} from 'react-native';
 type RootTabStackParamList = {
   Home: undefined;
   Settings: undefined;
@@ -93,7 +93,7 @@ function AppScreen(): JSX.Element {
         headerShown: false,
         tabBarShowLabel: false,
         tabBarStyle: {
-          backgroundColor: '#2e2c30',
+          backgroundColor: '#1a1d20',
           borderTopWidth: 0,
           borderTopColor: 'transparent',
         },
@@ -103,7 +103,7 @@ function AppScreen(): JSX.Element {
         options={{
           headerShown: true,
           headerStyle: {
-            backgroundColor: '#2e2c30',
+            backgroundColor: '#1a1d20',
             borderWidth: 0,
             elevation: 0,
             shadowOpacity: 0,
@@ -120,7 +120,7 @@ function AppScreen(): JSX.Element {
         options={{
           headerShown: true,
           headerStyle: {
-            backgroundColor: '#2e2c30',
+            backgroundColor: '#1a1d20',
             borderWidth: 0,
             elevation: 0,
             shadowOpacity: 0,

@@ -124,7 +124,7 @@ export function Home(): JSX.Element {
 
   return (
     <SafeAreaView style={styles.container}>
-      <FocusAwareStatusBar backgroundColor="#292931" barStyle="light-content" />
+      <FocusAwareStatusBar backgroundColor="#25272b" barStyle="light-content" />
       <Countdown value={remainingTime} mode={mode} />
       <Message mode={mode} finished={isFinished} />
       <TouchableOpacity style={styles.startBtn} onPress={handleStartFast}>

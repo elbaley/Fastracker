@@ -8,9 +8,12 @@ import auth from '@react-native-firebase/auth';
 import {styles} from './History.styles';
 import {ActivityIndicator} from 'react-native';
 import {Calendar} from 'react-native-calendars';
-import {MarkedDates} from 'react-native-calendars/src/types';
+import Ionicons from 'react-native-vector-icons/Ionicons';
+import {Direction} from 'react-native-calendars/src/types';
+import CircularProgress from 'react-native-circular-progress-indicator';
+import getMarkedDates from '../../utils/getMarkedDates';
 import {formatDate} from '../../utils/formatDate';
-interface Log {
+export interface Log {
   date: FirebaseFirestoreTypes.Timestamp;
   duration: number;
   userId: string;
@@ -20,6 +23,10 @@ interface Log {
 export function History(): JSX.Element {
   const [loading, setLoading] = useState(true);
   const [logs, setLogs] = useState<Log[]>([]);
+  const [currentDate, setCurrentDate] = useState({
+    month: new Date().getMonth(),
+    year: new Date().getFullYear(),
+  });
 
   useEffect(() => {
     const user = auth().currentUser;
@@ -42,127 +49,101 @@ export function History(): JSX.Element {
               userId: data.userId,
               key: documentSnapshot.id,
             };
-            fetchedLogs.push(log);
+            // only add if it is current month
+            const logDate = log.date.toDate();
+            if (
+              logDate.getMonth() === currentDate.month &&
+              logDate.getFullYear() === currentDate.year
+            ) {
+              fetchedLogs.push(log);
+            }
           }
           setLogs(fetchedLogs);
           setLoading(false);
         },
         err => {
-          console.log('Firebase ERR ❌');
           console.log(err);
         },
       );
 
     return () => subscriber();
-  }, []);
+  }, [currentDate]);
 
-  const getMarkedDates = (logs: Log[]) => {
-    const markedDates: MarkedDates = {};
-
-    for (let i = 0; i < logs.length; i++) {
-      const date = logs[i].date.toDate();
-      // YYYY-MM-DD format
-      const dateString = formatDate(date);
-
-      const prevDate = i - 1 >= 0 ? logs[i - 1].date.toDate() : null;
-      const nextDate =
-        i + 1 <= logs.length - 1 ? logs[i + 1].date.toDate() : null;
-
-      const isStartingDay = prevDate
-        ? Math.abs(date.getDate() - prevDate.getDate()) > 1
-        : false;
-      const isEndingDay = nextDate
-        ? nextDate.getDate() - date.getDate() > 1
-        : false;
-
-      // check startingDay
-      if (i === 0 || isStartingDay) {
-        markedDates[dateString] = {
-          color: '#FF002E',
-          startingDay: true,
-        };
-      } // check endingDay
-      else if (i === logs.length - 1 || isEndingDay) {
-        markedDates[dateString] = {
-          color: '#FF002E',
-          endingDay: true,
-        };
-      }
-      // otherwise add selected
-      else if (prevDate && date.getDate() - prevDate.getDate() === 1) {
-        markedDates[dateString] = {
-          color: '#FF002E',
-          selected: true,
-        };
-      }
-    }
-
-    return markedDates;
-  };
-
+  function renderLog({item}: {item: Log}) {
+    const date = item.date.toDate();
+    return (
+      <View style={styles.logContainer}>
+        <CircularProgress
+          activeStrokeColor="#FF002E"
+          initialValue={0}
+          duration={300}
+          radius={30}
+          value={100}
+          maxValue={100}
+          activeStrokeWidth={4}
+          inActiveStrokeWidth={0}
+          showProgressValue={false}
+        />
+        <View>
+          <Text style={styles.logDate}>
+            {date.toLocaleDateString('default', {
+              month: 'long',
+              day: 'numeric',
+            })}
+          </Text>
+          <Text style={styles.logType}>Fasting</Text>
+        </View>
+        <View style={styles.logDurationContainer}>
+          <Text style={styles.logDuration}>{item.duration}</Text>
+          <Text style={styles.logUnit}>hours</Text>
+        </View>
+      </View>
+    );
+  }
   if (loading) {
     return <ActivityIndicator />;
   }
 
   return (
     <SafeAreaView style={styles.container}>
-      <FocusAwareStatusBar backgroundColor="#2e2c30" barStyle="light-content" />
-      <Calendar
-        // Customize the appearance of the calendar
-        style={{
-          borderWidth: 1,
-          borderColor: 'transparent',
-          backgroundColor: '#292931',
-          height: 350,
-        }}
-        theme={{
-          calendarBackground: '#292931',
-          dayTextColor: 'white',
-          monthTextColor: 'white',
-          arrowColor: '#FF002E',
-        }}
-        // Callback that gets called when the user selects a day
-        onDayPress={day => {
-          console.log('selected day', day);
-        }}
-        // Mark specific dates as marked
-        markingType="period"
-        onMonthChange={month => {
-          console.log('Ay degisti', month);
-        }}
-        onVisibleMonthsChange={month => {
-          console.log('Ay visible degisti', month);
-        }}
-        // markedDates={{
-        //   '2023-08-01': {startingDay: true, color: '#FF002E'},
-        //   '2023-08-02': {selected: true, color: '#FF002E'},
-        //   '2023-08-03': {endingDay: true, color: '#FF002E'},
-        // }}
-        markedDates={getMarkedDates(logs)}
-      />
+      <FocusAwareStatusBar backgroundColor="#1a1d20" barStyle="light-content" />
       <FlatList
-        data={logs}
-        renderItem={({item}) => {
-          const date = item.date.toDate();
-          const formattedDate =
-            date.getDate() +
-            ' ' +
-            date.toLocaleDateString('default', {month: 'short'});
+        data={[...logs].sort((a, b) => b.date.toMillis() - a.date.toMillis())}
+        initialNumToRender={4}
+        ListHeaderComponent={() => {
           return (
-            <View
-              style={{
-                height: 50,
-                flex: 1,
-                justifyContent: 'center',
-                borderBottomWidth: 2,
-              }}>
-              <Text style={styles.logText}>
-                {formattedDate} - {item.duration}
-              </Text>
-            </View>
+            <Calendar
+              // Customize the appearance of the calendar
+              style={styles.logCalendar}
+              theme={{
+                calendarBackground: '#25272b',
+                dayTextColor: 'white',
+                monthTextColor: 'white',
+                arrowColor: '#FF002E',
+              }}
+              // Mark specific dates as marked
+              markingType="period"
+              current={formatDate(
+                new Date(currentDate.year, currentDate.month),
+              )}
+              onMonthChange={month => {
+                setCurrentDate(oldDate => {
+                  return {...oldDate, month: month.month - 1, year: month.year};
+                });
+              }}
+              markedDates={getMarkedDates(logs)}
+              hideExtraDays
+              enableSwipeMonths
+              renderArrow={(direction: Direction) => {
+                const iconName =
+                  direction === 'right' ? 'chevron-forward' : 'chevron-back';
+                return <Ionicons name={iconName} size={24} color={'#FF002E'} />;
+              }}
+            />
           );
         }}
-        keyExtractor={item => item.key}
+        showsVerticalScrollIndicator={false}
+        renderItem={renderLog}
       />
     </SafeAreaView>
   );

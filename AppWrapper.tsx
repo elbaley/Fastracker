@@ -9,7 +9,7 @@ const AppWrapper = () => {
   return (
     <Provider store={store}>
       <PersistGate persistor={persistor}>
-        <StatusBar backgroundColor="#292931" barStyle="light-content" />
+        <StatusBar backgroundColor="#25272b" barStyle="light-content" />
         <App />
       </PersistGate>
     </Provider>
