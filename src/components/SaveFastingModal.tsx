@@ -6,6 +6,7 @@ import auth from '@react-native-firebase/auth';
 import firestore from '@react-native-firebase/firestore';
 import Ionicons from 'react-native-vector-icons/Ionicons';
 import {useAppDispatch, useAppSelector} from '../app/store';
+import Toast from 'react-native-toast-message';
 const SaveFastingModal = () => {
   const dispatch = useAppDispatch();
   const {endDate, fastingTime} = useAppSelector(state => state.app);
@@ -22,6 +23,10 @@ const SaveFastingModal = () => {
           userId: user.uid,
         });
 
+        Toast.show({
+          type: 'blurSuccess',
+          text1: 'Fasting session has been saved!',
+        });
         dispatch(setShowSaveModal(false));
       } catch (error) {
         console.log(error);

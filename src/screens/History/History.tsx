@@ -101,7 +101,11 @@ export function History(): JSX.Element {
     );
   }
   if (loading) {
-    return <ActivityIndicator />;
+    return (
+      <SafeAreaView style={[styles.container, {justifyContent: 'center'}]}>
+        <ActivityIndicator />
+      </SafeAreaView>
+    );
   }
 
   return (

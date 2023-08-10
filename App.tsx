@@ -14,7 +14,8 @@ import {createNativeStackNavigator} from '@react-navigation/native-stack';
 import {signInAnonymously} from './src/auth';
 import SaveFastingModal from './src/components/SaveFastingModal';
 import {useAppSelector} from './src/app/store';
-import {Text} from 'react-native';
+import {CustomToast} from './src/lib/ToastConfig';
+
 type RootTabStackParamList = {
   Home: undefined;
   Settings: undefined;
@@ -23,7 +24,6 @@ type RootTabStackParamList = {
 
 const Tab = createBottomTabNavigator<RootTabStackParamList>();
 const Stack = createNativeStackNavigator();
-
 function App(): JSX.Element {
   const {showSaveFastingModal} = useAppSelector(state => state.app);
   useEffect(() => {
@@ -31,26 +31,29 @@ function App(): JSX.Element {
     signInAnonymously();
   }, []);
   return (
-    <NavigationContainer>
-      {showSaveFastingModal && <SaveFastingModal />}
-      <Stack.Navigator>
-        <Stack.Screen
-          name="OnboardingNotification"
-          component={OnboardingNotification}
-          options={{headerShown: false}}
-        />
-        <Stack.Screen
-          name="OnboardingTime"
-          component={OnboardingTime}
-          options={{headerShown: false}}
-        />
-        <Stack.Screen
-          name="AppScreen"
-          component={AppScreen}
-          options={{headerShown: false, gestureEnabled: false}}
-        />
-      </Stack.Navigator>
-    </NavigationContainer>
+    <>
+      <NavigationContainer>
+        {showSaveFastingModal && <SaveFastingModal />}
+        <Stack.Navigator>
+          <Stack.Screen
+            name="OnboardingNotification"
+            component={OnboardingNotification}
+            options={{headerShown: false}}
+          />
+          <Stack.Screen
+            name="OnboardingTime"
+            component={OnboardingTime}
+            options={{headerShown: false}}
+          />
+          <Stack.Screen
+            name="AppScreen"
+            component={AppScreen}
+            options={{headerShown: false, gestureEnabled: false}}
+          />
+        </Stack.Navigator>
+      </NavigationContainer>
+      <CustomToast />
+    </>
   );
 }
 
