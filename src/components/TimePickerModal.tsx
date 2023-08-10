@@ -3,6 +3,7 @@ import Modal from 'react-native-modal';
 import {StyleSheet, View, Text, TouchableOpacity} from 'react-native/';
 import {Picker} from '@react-native-picker/picker';
 import Ionicons from 'react-native-vector-icons/Ionicons';
+import Toast from 'react-native-toast-message';
 
 interface TimePickerModalProps {
   label: string;
@@ -19,6 +20,11 @@ const TimePickerModal = ({
 
   function updateTime() {
     onChangeTime(time);
+    Toast.show({
+      type: 'blurSuccess',
+      text1: `${label} time updated!`,
+      visibilityTime: 1000,
+    });
     setShowModal(false);
   }
 

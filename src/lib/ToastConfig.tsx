@@ -7,7 +7,7 @@ export const toastConfig: ToastConfig = {
   blurSuccess: ({text1}) => {
     return (
       <View style={styles.container}>
-        <View style={styles.greenBackground}></View>
+        <View style={styles.greenBackground} />
         <BlurView
           style={styles.absolute}
           blurType="dark"
@@ -50,7 +50,6 @@ const styles = StyleSheet.create({
     borderRadius: 10,
   },
   absolute: {
-    // backgroundColor: 'blue',
     position: 'absolute',
     top: 0,
     left: 0,

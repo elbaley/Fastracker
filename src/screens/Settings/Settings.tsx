@@ -13,12 +13,12 @@ export function Settings(): JSX.Element {
       <View>
         <TimePickerModal
           selectedTime={fastingTime}
-          label={'FASTING'}
+          label={'Fasting'}
           onChangeTime={time => dispatch(setFastingTime(time))}
         />
         <TimePickerModal
           selectedTime={eatingTime}
-          label={'EATING'}
+          label={'Eating'}
           onChangeTime={time => dispatch(setEatingTime(time))}
         />
       </View>
